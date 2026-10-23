@@ -3,6 +3,13 @@
 Roblox base-building/raiding game (Clash of Clans structure, original anime-archetype factions).
 Design: `docs/DESIGN.md` (active version listed at its top). Version log: `docs/VERSIONS.md`.
 
+## Dev Hub (every session)
+
+- **Start of session:** call Dev Hub `get_context` with slug `anime-base` before any other work. It serves the SRD, Working Agreements, Architecture, open decisions, and recent session logs.
+- **End of session:** call Dev Hub `add_session_log` for `anime-base` covering what was done, where it stopped, and what's next.
+- When an open decision is answered by the owner, record it with `resolve_decision`.
+- When `docs/DESIGN.md` or this file changes, update the matching Dev Hub doc (`srd` or `agreements`) so both stay in sync.
+
 ## Owner's coding principles (mandatory)
 
 1. **Cumulative architecture (add, never subtract).** Treat existing code as a fixed foundation. All changes are additive (extensions, new modules, new layers). Do not remove, refactor out, or alter existing structural logic unless explicitly told to.
@@ -43,8 +50,9 @@ Design: `docs/DESIGN.md` (active version listed at its top). Version log: `docs/
 
 ## Working loop
 
-1. Read the relevant current code and `docs/DESIGN.md`.
+1. Pull Dev Hub context, then read the relevant current code and `docs/DESIGN.md`.
 2. Make the scoped, additive change in `src/`.
 3. Confirm Rojo has synced it into Studio.
 4. Playtest through the Studio MCP and read the console output.
 5. Fix until clean, then commit, push, and tag. Save the place file locally. Do not publish.
+6. Write the Dev Hub session log.
