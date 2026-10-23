@@ -28,8 +28,9 @@ end
 
 stateEvent.OnClientEvent:Connect(onState)
 
--- First state: ask until the server has created the session (it may still be assigning the plot).
-for _ = 1, 20 do
+-- First state: ask until the server has created the session (plot + DataStore load), up to 15 s.
+-- The server also pushes state when the load finishes.
+for _ = 1, 60 do
 	local state = getState:InvokeServer()
 	if state then
 		onState(state)

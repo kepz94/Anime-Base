@@ -4,4 +4,7 @@ return {
 	-- Faction auto-picked for a new in-Studio profile, so a playtest starts at Town Hall 1 with the kit.
 	-- nil = show the normal faction pick.
 	AutoPickFactionInStudio = "Ninja",
+
+	-- true = PlayerStore.Load fails on purpose, to test the kick-on-load-failure path.
+	ForceLoadFailureInStudio = false,
 }
