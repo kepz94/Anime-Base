@@ -1,0 +1,16 @@
+# Roblox place files (game world lives in Roblox version history, not Git)
+*.rbxl
+*.rbxlx
+*.rbxl.lock
+*.rbxlx.lock
+
+# Rojo
+sourcemap.json
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Office lock files
+~$*
