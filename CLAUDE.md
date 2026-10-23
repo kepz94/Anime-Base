@@ -38,7 +38,8 @@ Design: `docs/DESIGN.md` (active version listed at its top). Version log: `docs/
 ### Hard rules for the Rojo + MCP split
 - **All code edits go through files in this repo.** Never edit a Rojo-managed script through the Studio MCP (`multi_edit`), because Rojo overwrites it.
 - Non-code world content (models, terrain, parts built in Studio) lives in the place file and is versioned by Roblox's place version history, not Git. Place files are git-ignored.
-- After each tested phase: commit, push, and tag the version in Git, then publish the place in Studio with the same version name and notes.
+- The place file is saved locally as `Anime-Base.rbxl` in the repo folder (git-ignored). **Never publish the place to Roblox unless the owner explicitly says to.**
+- After each tested phase: commit, push, and tag the version in Git, and save `Anime-Base.rbxl` in Studio (File → Save to File).
 
 ## Working loop
 
@@ -46,4 +47,4 @@ Design: `docs/DESIGN.md` (active version listed at its top). Version log: `docs/
 2. Make the scoped, additive change in `src/`.
 3. Confirm Rojo has synced it into Studio.
 4. Playtest through the Studio MCP and read the console output.
-5. Fix until clean, then commit, push, and tag.
+5. Fix until clean, then commit, push, and tag. Save the place file locally. Do not publish.
