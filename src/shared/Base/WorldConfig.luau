@@ -6,4 +6,7 @@ return {
 	TileStuds = 4, -- studs per tile
 	PlotsPerServer = 6, -- one plot per player; Players.MaxPlayers matches
 	CameraPitchDegrees = 45, -- base camera tilt, mirroring Clash of Clans
+	CameraYawDegrees = 45, -- grid seen corner-on (diamond), mirroring Clash of Clans
+	CameraFieldOfView = 40,
+	PlotBorderStuds = 16, -- gap around each plot
 }
