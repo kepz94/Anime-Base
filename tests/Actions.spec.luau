@@ -140,7 +140,7 @@ return {
 	end,
 
 	-- Upgrade / cancel -------------------------------------------------------------------------
-	["upgrade collector: cost, busy, level, production paused then new rate"] = function()
+	["upgrade collector: auto-collects, cost, busy, production paused then new rate"] = function()
 		local p = started()
 		local _, _, d = Actions.Place(p, cat, T0, OC, 2, 2)
 		local b = p.Buildings[tostring(d.Uid)]
@@ -148,14 +148,44 @@ return {
 		Actions.Advance(p, cat, T0 + 5 + 1800) -- 30 min at 200/h = 100
 		Assert.Near(b.Stored, 100, 1e-6, "stored before upgrade")
 		local coins = p.Coins
-		assert(Actions.StartUpgrade(p, cat, T0 + 1805, b.Uid))
+		local ok, _, r = Actions.StartUpgrade(p, cat, T0 + 1805, b.Uid)
+		Assert.True(ok)
+		Assert.Equal(r.Collected, 100, "auto-collected on upgrade start")
+		Assert.Near(r.Lost, 0, 1e-6, "nothing lost")
+		Assert.Equal(p.Ore, 100)
+		Assert.Equal(b.Stored, 0, "collector emptied")
 		Assert.Equal(p.Coins, coins - 600)
 		Assert.Equal(b.UpgradeEndsAt, T0 + 1805 + 15)
 		Actions.Advance(p, cat, T0 + 1815) -- mid-upgrade: no production
-		Assert.Near(b.Stored, 100, 1e-6, "paused")
+		Assert.Equal(b.Stored, 0, "paused")
 		Actions.Advance(p, cat, T0 + 1820 + 3600) -- done at T0+1820, then 1 h at 400/h
 		Assert.Equal(b.Level, 2)
-		Assert.Near(b.Stored, 500, 1e-6, "new rate after completion")
+		Assert.Near(b.Stored, 400, 1e-6, "new rate after completion")
+	end,
+	["upgrade collector with full storage: contents lost"] = function()
+		local p = started()
+		local _, _, d = Actions.Place(p, cat, T0, OC, 2, 2)
+		local b = p.Buildings[tostring(d.Uid)]
+		Actions.Advance(p, cat, T0 + 5 + 3600) -- 200 stored
+		p.Ore = 1000 -- TH1 capacity 1000, no storage: full
+		local ok, _, r = Actions.StartUpgrade(p, cat, T0 + 3605, b.Uid)
+		Assert.True(ok)
+		Assert.Equal(r.Collected, 0)
+		Assert.Near(r.Lost, 200, 1e-6, "overflow lost")
+		Assert.Equal(p.Ore, 1000, "storage unchanged")
+		Assert.Equal(b.Stored, 0, "collector emptied")
+	end,
+	["upgrade collector with partial room: fills storage, rest lost"] = function()
+		local p = started()
+		local _, _, d = Actions.Place(p, cat, T0, OC, 2, 2)
+		local b = p.Buildings[tostring(d.Uid)]
+		Actions.Advance(p, cat, T0 + 5 + 3600) -- 200 stored
+		p.Ore = 950
+		local _, _, r = Actions.StartUpgrade(p, cat, T0 + 3605, b.Uid)
+		Assert.Equal(r.Collected, 50)
+		Assert.Near(r.Lost, 150, 1e-6)
+		Assert.Equal(p.Ore, 1000)
+		Assert.Equal(b.Stored, 0)
 	end,
 	["upgrade rejections"] = function()
 		local p = started()

@@ -313,7 +313,18 @@ function Actions.StartUpgrade(profile, catalog, now: number, uid: number)
 	if seconds > 0 and busy >= total then
 		return false, "NoBuilderFree"
 	end
-	accrue(catalog, b, now) -- bank production up to the start; it pauses during the upgrade
+	-- Collector upgrade start (owner correction 2026-10-23): contents are collected automatically;
+	-- whatever does not fit in storage is lost. Production then pauses until the upgrade ends.
+	local collected, lost = 0, 0
+	local def = catalog:Building(b.BuildingId)
+	if def.BuildingType == "Collector" and b.Level >= 1 then
+		accrue(catalog, b, now)
+		local field = RESOURCE_FIELD[def.ResourceType]
+		collected = Rules.CollectAmount(b.Stored, profile[field], Actions.Capacity(profile, catalog, def.ResourceType))
+		lost = b.Stored - collected
+		profile[field] += collected
+		b.Stored = 0
+	end
 	profile.Coins -= nextRow.UpgradeCost
 	if seconds > 0 then
 		b.UpgradeEndsAt = now + seconds
@@ -323,7 +334,7 @@ function Actions.StartUpgrade(profile, catalog, now: number, uid: number)
 			b.ProducedAt = now
 		end
 	end
-	return true, nil, { EndsAt = b.UpgradeEndsAt, Level = b.Level }
+	return true, nil, { EndsAt = b.UpgradeEndsAt, Level = b.Level, Collected = collected, Lost = lost }
 end
 
 function Actions.CancelUpgrade(profile, catalog, now: number, uid: number)
