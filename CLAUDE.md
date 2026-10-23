@@ -45,7 +45,7 @@ Design: `docs/DESIGN.md` (active version listed at its top). Version log: `docs/
 ### Hard rules for the Rojo + MCP split
 - **All code edits go through files in this repo.** Never edit a Rojo-managed script through the Studio MCP (`multi_edit`), because Rojo overwrites it.
 - Non-code world content (models, terrain, parts built in Studio) lives in the place file and is versioned by Roblox's place version history, not Git. Place files are git-ignored.
-- The place file is saved locally as `Anime-Base.rbxl` in the repo folder (git-ignored).
+- The game is opened in Studio **from Roblox** (the private game). The local `Anime-Base.rbxl` file is no longer used (owner, 2026-10-23). Before DataStore work, confirm `game.PlaceId` is not 0.
 - The game is saved to Roblox as a **private** game (owner, 2026-10-23), with Studio Access to API Services enabled so real DataStores work. **Releasing it to the public requires the owner's explicit instruction.**
 - Studio testing uses the **same DataStores as the live game**. A separate test copy of the game is needed before public release.
 - After each tested phase: commit, push, and tag the version in Git.
