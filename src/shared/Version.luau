@@ -2,6 +2,6 @@
 -- Update this on every tagged release (see docs/VERSIONS.md).
 
 return {
-	Build = "v0.1",
-	Name = "Project setup",
+	Build = "v0.2",
+	Name = "Data layer",
 }
