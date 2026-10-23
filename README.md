@@ -4,7 +4,7 @@ Roblox base-building and raiding game with original anime-archetype factions.
 
 - Design: [`docs/DESIGN.md`](docs/DESIGN.md)
 - Version log: [`docs/VERSIONS.md`](docs/VERSIONS.md)
-- Stat template: [`docs/Stat_Template_v1.1.xlsx`](docs/Stat_Template_v1.1.xlsx)
+- Stat template: [`docs/Stat_Template_v1.3.xlsx`](docs/Stat_Template_v1.3.xlsx) (convert with `python tools/stat_converter.py`; needs Python + `pip install -r tools/requirements.txt`)
 - Working rules for Claude: [`CLAUDE.md`](CLAUDE.md)
 
 ## Setup (Windows)
@@ -24,6 +24,7 @@ Then in Roblox Studio: open a Baseplate place, click **Rojo** on the Plugins too
 Smoke test: press Play. The Output window should show:
 
 ```
-[Server] Anime-Base v0.1 (Project setup) loaded
-[Client] Anime-Base v0.1 (Project setup) loaded
+[Server] Anime-Base v0.2 (Data layer) loaded
+[Config] Stat Template v1.3: 116 records across 10 tabs, 0 errors
+[Client] Anime-Base v0.2 (Data layer) loaded
 ```

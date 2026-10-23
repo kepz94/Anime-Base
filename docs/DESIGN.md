@@ -1,6 +1,6 @@
 # Anime-Base — Game Design
 
-**Active design version: v2.3**
+**Active design version: v2.4**
 **Scope: vertical slice — Ninja + Ki Warriors (2 of 5 factions)**
 
 This document is the locked design. Rules here change only on an explicit decision by the owner. Every change gets a new version number and an entry in `docs/VERSIONS.md`.
@@ -41,6 +41,8 @@ Five mechanical factions. Each has its own buildings, defenses, characters, and 
 **Faction rules**
 - Town Hall starts at level 0 on faction selection.
 - Switching factions is allowed and resets Town Hall to 0.
+- **Town Hall 0** (v2.4) is the state right after faction selection: the player owns a level 0 Town Hall and nothing else. Upgrading 0 → 1 costs 0 Coins, takes 0 time, and happens automatically. Switching factions returns the player to this state.
+- **Starting kit** (v2.4, test values), granted at Town Hall 0 → 1: 2 Builder Huts and Market level 1 (both placed free), and 1,500 Coins.
 - Every faction has heroes across multiple elements, so no faction is weak in any weather.
 - Characters, buildings, and slots unlock by Town Hall level (mirror).
 - Heroes both defend and raid.
@@ -100,7 +102,13 @@ To be retuned once weather frequency is set.
 | Relic Shards | High | Town Hall 7 | Dark Elixir |
 
 - Resources are farmed, then sold for Coins at the **Market** building.
-- The Market has a per-cycle sell limit that grows with Market upgrades (prevents instant-selling from making raids worthless). **TBD:** cycle length and limit values.
+- The Market has a per-cycle sell limit that grows with Market upgrades (prevents instant-selling from making raids worthless). Rules (v2.4, test values):
+  - The limit resets daily at 00:00 UTC, at the same time for everyone.
+  - Market level N requires Town Hall N.
+  - Limit at Market level N = the Coin value (at the sell prices) of the total Ore + Essence storage capacity available at Town Hall N: the maximum number of storages at their maximum level for Town Hall N, plus the Town Hall's own storage if Clash of Clans gives it one at that level.
+  - Footprint 3x3, 1 Market per Town Hall level. Market level N uses the hitpoints, upgrade time, and Coin cost of the highest Essence Storage level available at Town Hall N. Market level 1 is placed free (starting kit).
+- **Sell prices** (v2.4, test values): 1 Ore = 1 Coin, 1 Essence = 2 Coins. Relic Shards: **TBD** (they unlock at Town Hall 7).
+- **Coin prices** (v2.4, test values): a building's Coin cost = its Clash of Clans build cost × the sell price of the matching resource (Gold → Ore, Elixir → Essence). These are base-tier prices; **TBD:** how the rarity tier is selected and the price multiplier per tier.
 - Raids steal **unsold** resources from collectors and storage. Coins are not lootable.
 
 ---
@@ -142,6 +150,8 @@ To be retuned once weather frequency is set.
 ### 7.6 Village rules
 - Each builder works on one building at a time.
 - All available buildings must be placed before upgrading the Town Hall.
+- That rule counts only buildings that exist in the Stat Template at that Town Hall level (v2.4). Defenses join once the rosters are decided.
+- Builders (v2.4): the slice starts with 2 builders, from the 2 Builder Huts in the starting kit (Clash of Clans default). Extra builders are not purchasable; **TBD:** how extra builders are priced.
 
 ### 7.7 Heroes (mirror)
 - Hero Hall level caps every hero's maximum level.
@@ -191,7 +201,9 @@ To be retuned once weather frequency is set.
 
 ## 9. Content data
 
-Unit, hero, defense, and trap stats are defined in `docs/Stat_Template_v1.2.xlsx` (one row per unit/defense/trap, per-level numbers on the Levels tabs). Game code reads stats from config modules generated from this template; balance changes never require logic changes.
+Unit, hero, defense, and trap stats are defined in `docs/Stat_Template_v1.3.xlsx` (one row per unit/defense/trap, per-level numbers on the Levels tabs). Game code reads stats from config modules generated from this template; balance changes never require logic changes.
+
+Building values for Town Hall 1–3 mirror Clash of Clans (source cited in each cell comment); both factions currently have identical values. Rows holding test values are marked Value status = Test. Economy settings (sell prices, Market reset, starting kit) are on the Economy tab. (v2.4)
 
 ---
 
@@ -201,7 +213,10 @@ Unit, hero, defense, and trap stats are defined in `docs/Stat_Template_v1.2.xlsx
 |---|---|
 | Weather schedule (frequency, duration per type) | Awakening curve retune, Mutation rates |
 | Mutation defense bonus values per weather | Battle balance |
-| Market cycle length and sell limits | Economy |
+| Relic Shard sell price | Economy (Town Hall 7) |
+| Extra builder pricing | Economy |
+| Rarity tier selection and price multiplier per tier | Economy |
+| Clan Castle, Spell Factory, Blacksmith in the vertical slice | Scope |
 | Storage loot % and caps per Town Hall | Economy |
 | Town Hall gap loot penalty/bonus values | Economy |
 | Shield Coin prices | Economy |

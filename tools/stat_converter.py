@@ -1,6 +1,6 @@
-"""Stat Template converter (v0.2).
+"""Stat Template converter (v0.2; v0.3: Stat Template v1.3 headers + Economy tab).
 
-Reads docs/Stat_Template_v1.2.xlsx and writes the Luau config modules:
+Reads docs/Stat_Template_v1.3.xlsx and writes the Luau config modules:
     src/shared/Config/Schema.luau        tab/field schema + enum values
     src/shared/Config/Data/<Tab>.luau    one record per filled row
 
@@ -27,11 +27,12 @@ from pathlib import Path
 import openpyxl
 
 REPO = Path(__file__).resolve().parent.parent
-DEFAULT_TEMPLATE = REPO / "docs" / "Stat_Template_v1.2.xlsx"
+DEFAULT_TEMPLATE = REPO / "docs" / "Stat_Template_v1.3.xlsx"
 OUT_DIR = REPO / "src" / "shared" / "Config"
 
 # Field types:
 #   id            primary key of a base tab (pattern checked at server start)
+#   key           primary key of a settings tab (identifier, e.g. StartingCoins)
 #   ref:<Tab>     ID that must exist in <Tab>
 #   string        free text
 #   int           whole number
@@ -72,9 +73,10 @@ TABS = [
             ("Hitpoints", "Hitpoints", "number"),
             ("Damage per second", "DamagePerSecond", "number"),
             ("Upgrade cost (Coins)", "UpgradeCost", "number"),
-            ("Upgrade time (hours)", "UpgradeTimeHours", "number"),
+            ("Upgrade time (s)", "UpgradeTimeSeconds", "number"),
             ("Required Town Hall", "RequiredTownHall", "int"),
             ("Required research building level", "RequiredLaboratoryLevel", "int"),
+            ("Value status", "ValueStatus", "enum:ValueStatus"),
             ("Notes", "Notes", "string"),
         ],
     },
@@ -122,9 +124,10 @@ TABS = [
             ("Hitpoints", "Hitpoints", "number"),
             ("Damage per second", "DamagePerSecond", "number"),
             ("Upgrade cost (Coins)", "UpgradeCost", "number"),
-            ("Upgrade time (hours)", "UpgradeTimeHours", "number"),
+            ("Upgrade time (s)", "UpgradeTimeSeconds", "number"),
             ("Required Town Hall", "RequiredTownHall", "int"),
             ("Count allowed at this Town Hall", "CountAllowed", "int"),
+            ("Value status", "ValueStatus", "enum:ValueStatus"),
             ("Notes", "Notes", "string"),
         ],
     },
@@ -150,8 +153,9 @@ TABS = [
             ("Level", "Level", "int"),
             ("Damage", "Damage", "number"),
             ("Upgrade cost (Coins)", "UpgradeCost", "number"),
-            ("Upgrade time (hours)", "UpgradeTimeHours", "number"),
+            ("Upgrade time (s)", "UpgradeTimeSeconds", "number"),
             ("Required Town Hall", "RequiredTownHall", "int"),
+            ("Value status", "ValueStatus", "enum:ValueStatus"),
             ("Notes", "Notes", "string"),
         ],
     },
@@ -178,7 +182,7 @@ TABS = [
             ("Level", "Level", "int"),
             ("Hitpoints", "Hitpoints", "number"),
             ("Upgrade cost (Coins)", "UpgradeCost", "number"),
-            ("Upgrade time (hours)", "UpgradeTimeHours", "number"),
+            ("Upgrade time (s)", "UpgradeTimeSeconds", "number"),
             ("Required Town Hall", "RequiredTownHall", "int"),
             ("Count allowed at this Town Hall", "CountAllowed", "int"),
             ("Resource production rate (per hour)", "ProductionPerHour", "number"),
@@ -189,6 +193,17 @@ TABS = [
             ("Hero slots", "HeroSlots", "int"),
             ("Builders provided", "BuildersProvided", "int"),
             ("Unlocks (unit IDs, comma-separated)", "Unlocks", "idlist:Units"),
+            ("Value status", "ValueStatus", "enum:ValueStatus"),
+            ("Notes", "Notes", "string"),
+        ],
+    },
+    {
+        "Sheet": "Economy", "Module": "Economy", "Kind": "settings",
+        "Fields": [
+            ("Setting ID", "SettingId", "key"),
+            ("Value", "Value", "number"),
+            ("Unit", "Unit", "string"),
+            ("Value status", "ValueStatus", "enum:ValueStatus"),
             ("Notes", "Notes", "string"),
         ],
     },
@@ -237,7 +252,7 @@ def read_enums(wb):
 def convert_cell(value, ftype, enums, where):
     if value is None or (isinstance(value, str) and value.strip() == ""):
         return None
-    if ftype in ("id", "string") or ftype.startswith("ref:"):
+    if ftype in ("id", "key", "string") or ftype.startswith("ref:"):
         return str(value).strip()
     if ftype in ("int", "number"):
         if isinstance(value, bool) or not isinstance(value, (int, float)):

@@ -21,7 +21,8 @@ local RESOURCE_TYPE_SCOPE = {
 -- (Legend: "Building Levels columns by type"; other types leave them blank).
 local BUILDING_LEVEL_SCOPE = {
 	ProductionPerHour = { Collector = true },
-	ResourceCapacity = { Collector = true, Storage = true },
+	-- Town Hall (v0.3, Design v2.4): its own storage, per resource (Ore and Essence each).
+	ResourceCapacity = { Collector = true, Storage = true, ["Town Hall"] = true },
 	MarketSellLimit = { Market = true },
 	ArmyCampHousing = { ["Army Camp"] = true },
 	MaxHeroLevel = { ["Hero Hall"] = true },
@@ -44,6 +45,11 @@ local function checkType(value: any, fieldType: string, enumSets: { [string]: { 
 	if base == "id" or base == "ref" or base == "string" then
 		if type(value) ~= "string" or value == "" then
 			return `expected non-empty text, got {typeof(value)} {tostring(value)}`
+		end
+		return nil
+	elseif base == "key" then
+		if type(value) ~= "string" or string.match(value, "^%a%w*$") == nil then
+			return `expected an identifier (letters and digits, e.g. StartingCoins), got {tostring(value)}`
 		end
 		return nil
 	elseif base == "int" or base == "number" then
@@ -149,7 +155,7 @@ function Validate.Run(Config)
 			local id = record[keyField]
 			if id == nil then
 				fail(tab, record, keyField, "ID is required")
-			elseif tab.Kind == "base" or tab.Kind == "extension" then
+			elseif tab.Kind == "base" or tab.Kind == "extension" or tab.Kind == "settings" then
 				if ids[id] then
 					fail(tab, record, keyField, `duplicate ID (first on row {ids[id]._Row})`)
 				else
