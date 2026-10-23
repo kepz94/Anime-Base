@@ -12,8 +12,8 @@ Roblox base-building and raiding game with original anime-archetype factions.
 Requirements: Roblox Studio, Git for Windows, Rokit, Claude Code.
 
 ```powershell
-git clone https://github.com/kepz94/anime-base.git
-cd anime-base
+git clone https://github.com/kepz94/Anime-Base.git
+cd Anime-Base
 rokit install          # installs Rojo 7.7.0 from rokit.toml
 rojo plugin install    # installs the matching Rojo plugin into Studio
 rojo serve             # starts live sync

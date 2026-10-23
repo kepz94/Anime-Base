@@ -191,7 +191,7 @@ To be retuned once weather frequency is set.
 
 ## 9. Content data
 
-Unit, hero, defense, and trap stats are defined in `docs/Stat_Template_v1.1.xlsx` (one row per unit/defense/trap, per-level numbers on the Levels tabs). Game code reads stats from config modules generated from this template; balance changes never require logic changes.
+Unit, hero, defense, and trap stats are defined in `docs/Stat_Template_v1.2.xlsx` (one row per unit/defense/trap, per-level numbers on the Levels tabs). Game code reads stats from config modules generated from this template; balance changes never require logic changes.
 
 ---
 

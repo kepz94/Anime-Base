@@ -34,7 +34,7 @@ Design: `docs/DESIGN.md` (active version listed at its top). Version log: `docs/
 
 ## Toolchain
 
-- **GitHub is the source of truth for all code.** Repo: `kepz94/anime-base`.
+- **GitHub is the source of truth for all code.** Repo: `kepz94/Anime-Base`.
 - **Rojo 7.7.0** (pinned in `rokit.toml`) syncs `src/` into Studio:
   - `src/shared` → `ReplicatedStorage.Shared`
   - `src/server` → `ServerScriptService.Server`
@@ -46,7 +46,8 @@ Design: `docs/DESIGN.md` (active version listed at its top). Version log: `docs/
 - **All code edits go through files in this repo.** Never edit a Rojo-managed script through the Studio MCP (`multi_edit`), because Rojo overwrites it.
 - Non-code world content (models, terrain, parts built in Studio) lives in the place file and is versioned by Roblox's place version history, not Git. Place files are git-ignored.
 - The place file is saved locally as `Anime-Base.rbxl` in the repo folder (git-ignored). **Never publish the place to Roblox unless the owner explicitly says to.**
-- After each tested phase: commit, push, and tag the version in Git, and save `Anime-Base.rbxl` in Studio (File → Save to File).
+- After each tested phase: commit, push, and tag the version in Git.
+- Saving the place is not needed after code changes: Rojo restores all code on connect. Only if Studio-built content (models, terrain) is added, flag once that the place needs saving.
 
 ## Working loop
 
@@ -54,5 +55,5 @@ Design: `docs/DESIGN.md` (active version listed at its top). Version log: `docs/
 2. Make the scoped, additive change in `src/`.
 3. Confirm Rojo has synced it into Studio.
 4. Playtest through the Studio MCP and read the console output.
-5. Fix until clean, then commit, push, and tag. Save the place file locally. Do not publish.
+5. Fix until clean, then commit, push, and tag. Do not publish.
 6. Write the Dev Hub session log.
